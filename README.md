@@ -8,77 +8,80 @@
 </p>
 
 <p align="center">
-  <b>将 Google 桌面端强制跨设备扫码验证（MO-SMS / GMS Constellation）一键降级回传统的「输入手机号接收 6 位短信验证码」流程。</b><br/>
-  Switch Google's mandatory cross-device QR verification back to standard 6-digit SMS / Voice verification on desktop browsers.
+  <b>Switch Google's mandatory desktop cross-device QR verification (MO-SMS / GMS Constellation) back to standard 6-digit SMS / Voice code verification with a single click.</b>
+</p>
+
+<p align="center">
+  <a href="./README.md">English</a> | <a href="./README_zh.md">简体中文</a>
 </p>
 
 ---
 
-## 📦 一、安装教程 (Installation)
+## 📦 1. Installation Guide
 
-### 方式 1：直接下载 Release 压缩包（推荐新手）
-1. 前往本仓库的 **[Releases 页面](https://github.com/havenicec/google-qr-sms-helper/releases/latest)**，下载最新的 `google-qr-sms-helper-v1.1.0.zip` 并解压到本地文件夹。
-2. 打开 Chrome / Edge / Brave 浏览器，在地址栏输入 `chrome://extensions/` 并回车。
-3. 打开页面右上角的 **「开发者模式 (Developer mode)」** 开关。
-4. 点击左上角的 **「加载已解压的扩展程序 (Load unpacked)」**，选中刚才解压出来的文件夹即可完成安装。
+### Method 1: Download Release Archive (Recommended for Beginners)
+1. Go to the repository's **[Releases Page](https://github.com/verisimb/google-qr-sms-helper/releases/latest)**, download the latest `google-qr-sms-helper-v1.1.0.zip`, and extract it locally.
+2. Open Chrome, Edge, or Brave, enter `chrome://extensions/` in the address bar, and press Enter.
+3. Turn on the **"Developer mode"** toggle in the top-right corner.
+4. Click **"Load unpacked"** in the top-left corner and select the extracted folder to install.
 
-### 方式 2：通过 Git 克隆安装
+### Method 2: Install via Git Clone
 ```bash
-git clone https://github.com/havenicec/google-qr-sms-helper.git
+git clone https://github.com/verisimb/google-qr-sms-helper.git
 ```
-然后在 `chrome://extensions/` 中开启「开发者模式」，点击「加载已解压的扩展程序」并选择 `google-qr-sms-helper` 目录。
+Then navigate to `chrome://extensions/`, enable **Developer mode**, click **Load unpacked**, and select the `google-qr-sms-helper` directory.
 
 ---
 
-## 🚀 二、保姆级图文使用教程 (Step-by-Step Usage Guide)
+## 🚀 2. Step-by-Step Usage Guide
 
 > [!IMPORTANT]
-> **核心前提（必看）**：**不要**直接从第三方客户端（如 Antigravity / Gemini Code Assist 授权页）弹出的二维码页面降级（因为其 `continue` 参数包含多层嵌套重定向，会被 Google 重新拦截回二维码）。  
-> **必须先打开 Google Cloud Console 通过 Cloud Shell 唤出原生的 `Verify` 窗口**！在这里过完一次短信验证后，你的 Google 账号权限将全局解锁，再回 Antigravity 等工具登录即可直接丝滑通过。
+> **Core Prerequisite (Must Read)**: **Do NOT** attempt to downgrade directly from QR code pages launched by third-party clients (such as Antigravity / Gemini Code Assist authorization pages). Their `continue` parameters contain multi-level nested redirects that Google will intercept and push back to QR verification.  
+> **You must first open Google Cloud Console and trigger the native `Verify` prompt via Cloud Shell**! Once you complete SMS verification here, your Google account permissions are unlocked globally, allowing smooth subsequent sign-ins for Antigravity and other tools.
 
-### 第 1 步：打开 Google Cloud Console 并唤起 Cloud Shell 验证
-1. 在浏览器中登录你需要验证的 Google 账号，访问 **[https://console.cloud.google.com/](https://console.cloud.google.com/)**。
-2. 如下图所示，点击页面右上角导航栏的 **「激活 Cloud Shell」终端图标 `[>_]`**（或者直接点击页面右下角插件悬浮窗里的 **`1. 自动点击 Cloud Shell 终端图标`** 按钮）。
-3. 在底部弹出的 `Verify your account` 窗口中，点击蓝色的 **`Verify`** 按钮：
+### Step 1: Open Google Cloud Console & Trigger Cloud Shell Verification
+1. Sign in to the Google account you wish to verify and go to **[https://console.cloud.google.com/](https://console.cloud.google.com/)**.
+2. As shown below, click the **"Activate Cloud Shell" terminal icon `[>_]`** in the top-right navigation bar (or click **`1. Click Cloud Shell Icon`** in the extension's floating widget at the bottom right).
+3. In the `Verify your account` dialog at the bottom, click the blue **`Verify`** button:
 
-![Cloud Shell Verify 入口示意](./assets/cloud-shell-verify.png)
-
----
-
-### 第 2 步：在二维码页面点击「一键降级到短信选择框」
-1. 点击 `Verify` 后，会弹出 Google 的二维码验证页面（`/v3/signin/challenge/iap/qrcode`）。
-2. 等待二维码图片加载出来后，点击页面右下角插件悬浮面板上的 **「⚡ 一键降级到短信选择框」** 按钮：
-   - 插件会自动调用浏览器原生 `BarcodeDetector` 识别页面上的二维码；
-   - 自动在后台向 Google 发送 `MypxBd` 与 `YDtwf ([null, uuid, dsh, 7, null, tl, false])` 数据包，拿到 `[3, null, 4]`（非 Android 设备回退短信验证状态）；
-   - 自动将当前标签页的请求头与环境伪装为 **`iPad Mini`**（无需手动按 F12 切换设备），并重定向到 `uplevelingstep/selection?...&idv_xdevice=1`。
+![Cloud Shell Verify Entry Point](./assets/cloud-shell-verify.png)
 
 ---
 
-### 第 3 步：选择「短信 (Text message)」并输入手机号接码
-1. 页面会自动跳转进带有单选框的 **验证方式选择页 (`/uplevelingstep/selection`)**：
-   - 勾选 **Text message (SMS) / 短信**（或语音通话），点击下一步。
-2. 在手机号输入框中填入你的接码手机号（支持任意国家/地区的接码平台号码或实体卡号），点击发送验证码。
-3. 收到 `G-xxxxxx` 的 6 位数字验证码后填入并点击 **Next**，即可完成账号验证！
-4. 验证通过后，回到 Cloud Shell 或 Antigravity / Gemini CLI 刷新即可正常使用。
+### Step 2: Click "Downgrade to SMS Selection" on the QR Code Page
+1. Clicking `Verify` opens Google's QR verification page (`/v3/signin/challenge/iap/qrcode`).
+2. Once the QR code image finishes rendering, click **「⚡ 一键降级到短信选择框 (Downgrade to SMS)」** on the extension's floating panel:
+   - The extension automatically calls the browser's native `BarcodeDetector` API to scan and decode the QR code;
+   - In the background, it sends `MypxBd` and `YDtwf ([null, uuid, dsh, 7, null, tl, false])` RPC requests to Google to obtain `[3, null, 4]` (non-Android device fallback state);
+   - It automatically spoofs the current tab's request headers and environment as an **`iPad Mini`** (no manual DevTools / F12 emulation required) and redirects to `uplevelingstep/selection?...&idv_xdevice=1`.
 
 ---
 
-## ❓ 三、常见问题与避坑指南 (FAQ & Troubleshooting)
-
-### Q1: 为什么我从别的链接点进二维码页，点降级后又跳回了二维码？
-- **原因**：只有从 `https://console.cloud.google.com/` 点击右上角 **Cloud Shell `[>_]` -> `Verify`** 唤出的二维码页，其 `continue` 参数才是纯净的 `https://accounts.google.com/uplevelingstep/selection?TL=...&authuser=0&flowName=GlifWebSignIn&sarp=1&scc=1`。请务必按「第 1 步」从 Cloud Shell 入口进入。
-
-### Q2: 为什么插件默认伪装成 `iPad Mini` 而不是 `iPad Pro` 或桌面浏览器？
-- **原因**：Google 的 `uplevelingstep/selection` 接口会校验 `User-Agent`：
-  - 桌面端（Windows / macOS）以及 Chrome F12 中的 `iPad Pro 13` 发送的都是 `Macintosh; Intel Mac OS X` 桌面级 UA，Google 检测到桌面环境会无视 `idv_xdevice=1` 强行跳回二维码。
-  - 而 `iPad Mini` 发送的是纯移动端 `iPad; CPU OS 16_6 like Mac OS X ... Mobile/15E148` 请求头，且在提交 6 位验证码的 `/_/IdvUplevelingUi/data/batchexecute` 接口上必须保持前后完全一致的 `iPad Mini` 请求头（已在 v1.1.0 中通过 `declarativeNetRequest` 全路径自动覆盖，无需手动开 F12）。
-
-### Q3: 点击「一键降级」提示“未能在当前页面识别到二维码”怎么办？
-- 请确认使用的是 **Chrome / Edge 88+** 浏览器（支持原生 `BarcodeDetector` 接口），并等待页面上的黑色二维码图案完全显示后再点击按钮。
+### Step 3: Select "Text message (SMS)" & Enter Phone Number
+1. The page redirects to the **verification method selection page (`/uplevelingstep/selection`)**:
+   - Check **Text message (SMS)** (or Voice call), then click Next.
+2. Enter your phone number (supports numbers from any country/region, virtual SMS platforms, or physical SIM cards) and click Send code.
+3. Enter the 6-digit `G-xxxxxx` code received and click **Next** to complete account verification!
+4. After verification succeeds, return to Cloud Shell or Antigravity / Gemini CLI and refresh to proceed.
 
 ---
 
-## ✨ 四、技术原理与工作流 (Architecture & Workflow)
+## ❓ 3. FAQ & Troubleshooting
+
+### Q1: Why does clicking downgrade jump back to the QR code when coming from other links?
+- **Root Cause**: Only QR pages opened via **Cloud Shell `[>_]` -> `Verify`** on `https://console.cloud.google.com/` carry a clean `continue` parameter pointing directly to `https://accounts.google.com/uplevelingstep/selection?TL=...&authuser=0&flowName=GlifWebSignIn&sarp=1&scc=1`. Please make sure to follow **Step 1** via the Cloud Shell entry point.
+
+### Q2: Why does the extension spoof an `iPad Mini` instead of an `iPad Pro` or desktop browser?
+- **Root Cause**: Google's `uplevelingstep/selection` endpoint strictly validates the `User-Agent`:
+  - Desktop environments (Windows / macOS) and DevTools' `iPad Pro 13` preset send a `Macintosh; Intel Mac OS X` desktop-class UA. When Google detects desktop environments, it ignores `idv_xdevice=1` and forces a redirect back to QR verification.
+  - In contrast, `iPad Mini` sends a clean mobile UA header: `iPad; CPU OS 16_6 like Mac OS X ... Mobile/15E148`. In addition, submitting the 6-digit verification code on `/_/IdvUplevelingUi/data/batchexecute` requires an identical `iPad Mini` header throughout the session (fully handled automatically via `declarativeNetRequest` in v1.1.0 without manual DevTools intervention).
+
+### Q3: What should I do if clicking "Downgrade" displays "Could not detect QR code on the current page"?
+- Ensure you are using **Chrome / Edge 88+** (which supports the native `BarcodeDetector` API), and wait until the black QR code image on the page has fully loaded before clicking the button.
+
+---
+
+## ✨ 4. Technical Architecture & Workflow
 
 ```mermaid
 sequenceDiagram
@@ -89,7 +92,7 @@ sequenceDiagram
 
     U->>G: 1. Trigger Verify from Cloud Console (Cloud Shell)
     G-->>U: Render /v3/signin/challenge/iap/qrcode
-    U->>E: 2. Click "⚡ 一键降级到短信选择框"
+    U->>E: 2. Click "⚡ Downgrade to SMS Selection"
     E->>E: Decode QR Canvas/Image via native BarcodeDetector
     E->>B: Send QR URL (devicephoneverification/begin)
     B->>G: POST MypxBd (SelectNextVerificationMethod -> consent)
@@ -103,18 +106,19 @@ sequenceDiagram
 
 ---
 
-## 📁 目录结构 (Project Structure)
+## 📁 5. Project Structure
 
 ```text
 google-qr-sms-helper/
 ├── assets/
-│   └── cloud-shell-verify.png  # Cloud Shell Verify 入口示意图
-├── manifest.json               # Chrome Extension Manifest V3 配置文件
-├── background.js               # DNR 全路径 iPad Mini 请求头伪装 + [3,null,4] RPC 注入
-├── content.js                  # 悬浮控制面板 + BarcodeDetector 二维码识别 + URL 清洗跳转
-├── ua_spoof.js                 # Main-world navigator 属性对齐
-├── LICENSE                     # MIT 开源协议
-└── README.md                   # 项目说明与图文教程
+│   └── cloud-shell-verify.png  # Cloud Shell Verify entry point screenshot
+├── manifest.json               # Chrome Extension Manifest V3 configuration
+├── background.js               # DNR full-path iPad Mini header spoofing + [3,null,4] RPC injection
+├── content.js                  # Floating control panel + BarcodeDetector QR scanning + URL sanitization & redirect
+├── ua_spoof.js                 # Main-world navigator property alignment
+├── LICENSE                     # MIT Open Source License
+├── README.md                   # Project documentation & visual guide (English)
+└── README_zh.md                # Project documentation & visual guide (Simplified Chinese)
 ```
 
 ---
